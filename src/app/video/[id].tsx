@@ -75,7 +75,7 @@ export default function VideoDetailsScreen() {
       <Stack.Screen options={{ title: video.name }} />
 
       {fileExists ? (
-        <VideoPlayer uri={getVideoUri(video.fileName)} />
+        <VideoPlayer uri={getVideoUri(video.fileName)} autoPlay loop />
       ) : (
         <ThemedView type="backgroundElement" style={styles.missing}>
           <ThemedText themeColor="textSecondary">

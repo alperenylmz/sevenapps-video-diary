@@ -27,8 +27,6 @@ export default function TrimPocScreen() {
   const theme = useTheme();
   const trim = useTrimClipMutation();
   const addVideo = useVideoStore((state) => state.addVideo);
-  const videoCount = useVideoStore((state) => state.videos.length);
-
   const [picked, setPicked] = useState<PickedVideo | null>(null);
   const [startInput, setStartInput] = useState("0");
   const [pickError, setPickError] = useState<string | null>(null);
@@ -96,7 +94,7 @@ export default function TrimPocScreen() {
     const { id, fileName } = saveTrimmedVideo(trimmedUri);
     addVideo({
       id,
-      name: `Clip ${videoCount + 1}`,
+      name: `Clip ${new Date().toLocaleTimeString()}`,
       description: "Saved from the trim PoC",
       fileName,
       durationSeconds: CLIP_DURATION_SECONDS,
