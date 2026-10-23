@@ -18,6 +18,12 @@ export default function RootLayout() {
         <AnimatedSplashOverlay />
         <Stack>
           <Stack.Screen name="index" options={{ title: "Video Diary" }} />
+          <Stack.Screen name="video/[id]" options={{ title: "Video" }} />
+          <Stack.Screen
+            name="create"
+            options={{ title: "New Clip", presentation: "modal" }}
+          />
+          <Stack.Screen name="trim-poc" options={{ title: "Trim PoC" }} />
         </Stack>
       </ThemeProvider>
     </QueryClientProvider>
