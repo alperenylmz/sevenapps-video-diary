@@ -15,13 +15,20 @@ import {
     CLIP_DURATION_SECONDS,
     useTrimClipMutation,
 } from "@/features/video-trim/use-trim-clip-mutation";
+import { saveTrimmedVideo } from "@/features/videos/video-storage";
 import { useTheme } from "@/hooks/use-theme";
+import { router } from "expo-router";
+
+import { useVideoStore } from "@/features/videos/video-store";
 
 type PickedVideo = { uri: string; durationSeconds: number };
 
 export default function TrimPocScreen() {
   const theme = useTheme();
   const trim = useTrimClipMutation();
+  const addVideo = useVideoStore((state) => state.addVideo);
+  const videoCount = useVideoStore((state) => state.videos.length);
+
   const [picked, setPicked] = useState<PickedVideo | null>(null);
   const [startInput, setStartInput] = useState("0");
   const [pickError, setPickError] = useState<string | null>(null);
@@ -81,6 +88,23 @@ export default function TrimPocScreen() {
     );
   }
 
+  function handleSave() {
+    const trimmedUri = trim.data?.uri;
+    if (!trimmedUri) return;
+    trim.reset();
+
+    const { id, fileName } = saveTrimmedVideo(trimmedUri);
+    addVideo({
+      id,
+      name: `Clip ${videoCount + 1}`,
+      description: "Saved from the trim PoC",
+      fileName,
+      durationSeconds: CLIP_DURATION_SECONDS,
+      createdAt: Date.now(),
+    });
+    router.back();
+  }
+
   return (
     <ScrollView
       contentInsetAdjustmentBehavior="automatic"
@@ -126,6 +150,7 @@ export default function TrimPocScreen() {
             {trim.data.uri}
           </ThemedText>
           <ResultPreview uri={trim.data.uri} />
+          <Button title="Save to diary" onPress={handleSave} />
         </>
       )}
     </ScrollView>
