@@ -17,3 +17,16 @@ export function saveTrimmedVideo(trimmedUri: string): {
 
   return { id, fileName };
 }
+
+export function getVideoUri(fileName: string): string {
+    return new File(getVideosDirectory(), fileName).uri;
+}
+  
+export function videoFileExists(fileName: string): boolean {
+    return new File(getVideosDirectory(), fileName).exists;
+}
+  
+export function deleteVideoFile(fileName: string) {
+    const file = new File(getVideosDirectory(), fileName);
+    if (file.exists) file.delete();
+}
