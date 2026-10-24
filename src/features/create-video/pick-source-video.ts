@@ -1,4 +1,4 @@
-import { CLIP_DURATION_SECONDS } from "@/features/video-trim/use-trim-clip-mutation";
+import { CLIP_DURATION_SECONDS } from "@/features/video-trim/trim-clip";
 import * as ImagePicker from "expo-image-picker";
 import type { SourceVideo } from "./types";
 

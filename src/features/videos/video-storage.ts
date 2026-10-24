@@ -30,3 +30,8 @@ export function deleteVideoFile(fileName: string) {
     const file = new File(getVideosDirectory(), fileName);
     if (file.exists) file.delete();
 }
+
+export function deleteFileAtUri(uri: string){
+  const file = new File(uri);
+  if(file.exists) file.delete();
+}

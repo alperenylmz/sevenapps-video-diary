@@ -1,4 +1,4 @@
-import { CLIP_DURATION_SECONDS } from "@/features/video-trim/use-trim-clip-mutation";
+import { CLIP_DURATION_SECONDS } from "@/features/video-trim/trim-clip";
 import { useState } from "react";
 import { ActivityIndicator, Pressable, Text, View } from "react-native";
 import { pickSourceVideo } from "../pick-source-video";

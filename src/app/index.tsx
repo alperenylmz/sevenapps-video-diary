@@ -35,14 +35,11 @@ export default function HomeScreen() {
             <Link href="/create">
               <ThemedText type="link">Create a clip</ThemedText>
             </Link>
-            <Link href="/trim-poc">
-              <ThemedText type="link">Trim PoC</ThemedText>
-            </Link>
           </ThemedView>
         }
         ListEmptyComponent={
           <ThemedText themeColor="textSecondary">
-            No videos yet. Save one from the Trim PoC.
+            No videos yet. Tap &quot;Create a Clip&quot; to add one.
           </ThemedText>
         }
       />

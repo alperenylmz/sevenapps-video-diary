@@ -1,4 +1,4 @@
-import { CLIP_DURATION_SECONDS } from "@/features/video-trim/use-trim-clip-mutation";
+import { CLIP_DURATION_SECONDS } from "@/features/video-trim/trim-clip";
 import { useEventListener } from "expo";
 import { useVideoPlayer, VideoView, type VideoPlayer } from "expo-video";
 import { useState } from "react";

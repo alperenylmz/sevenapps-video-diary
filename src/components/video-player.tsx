@@ -1,4 +1,5 @@
 import { useVideoPlayer, VideoView } from "expo-video";
+import { useRef } from "react";
 import { StyleProp, StyleSheet, ViewStyle } from "react-native";
 
 type VideoPlayerProps = {
@@ -14,10 +15,18 @@ export function VideoPlayer({
   loop = false,
   style,
 }: VideoPlayerProps) {
+  const hasAutoPlayed = useRef(false);
+
   const player = useVideoPlayer(uri, (instance) => {
     instance.loop = loop;
-    if (autoPlay) instance.play();
   });
+
+  //ilk frame gelmeden başlamamak için aksi takdirde videoda kayma oluyor
+  function handleFirstFrameRender() {
+    if (!autoPlay || hasAutoPlayed.current) return;
+    hasAutoPlayed.current = true;
+    player.play();
+  }
 
   return (
     <VideoView
@@ -25,6 +34,7 @@ export function VideoPlayer({
       style={[styles.video, style]}
       nativeControls
       contentFit="contain"
+      onFirstFrameRender={handleFirstFrameRender}
     />
   );
 }

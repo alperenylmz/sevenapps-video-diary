@@ -1,8 +1,14 @@
 import { CropStep } from "@/features/create-video/components/crop-step";
+import {
+  DetailsStep,
+  type ClipDetails,
+} from "@/features/create-video/components/details-step";
 import { SelectVideoStep } from "@/features/create-video/components/select-video-step";
 import type { CreateStep, SourceVideo } from "@/features/create-video/types";
+import { useCreateClipMutation } from "@/features/create-video/use-create-clip-mutation";
+import { router, Stack } from "expo-router";
 import { useState } from "react";
-import { Pressable, Text, View } from "react-native";
+import { Text, View } from "react-native";
 
 const STEPS: CreateStep[] = ["select", "crop", "details"];
 
@@ -10,6 +16,7 @@ export default function CreateVideoScreen() {
   const [step, setStep] = useState<CreateStep>("select");
   const [source, setSource] = useState<SourceVideo | null>(null);
   const [startSeconds, setStartSeconds] = useState(0);
+  const createClip = useCreateClipMutation();
 
   function handleSelected(video: SourceVideo) {
     setSource(video);
@@ -26,8 +33,17 @@ export default function CreateVideoScreen() {
     setStep("details");
   }
 
+  function handleSubmit(details: ClipDetails) {
+    if (!source) return;
+    createClip.mutate(
+      { sourceUri: source.uri, startSeconds, ...details },
+      { onSuccess: () => router.back() },
+    );
+  }
+
   return (
     <View className="flex-1 bg-white dark:bg-black">
+      <Stack.Screen options={{ gestureEnabled: !createClip.isPending }} />
       <Text className="pt-4 text-center text-sm font-medium text-neutral-500 dark:text-neutral-400">
         Step {STEPS.indexOf(step) + 1} of {STEPS.length}
       </Text>
@@ -41,15 +57,12 @@ export default function CreateVideoScreen() {
         />
       )}
       {step === "details" && (
-        <View className="flex-1 items-center justify-center gap-4 p-4">
-          <Text className="text-black dark:text-white">
-            Selected: {startSeconds.toFixed(2)}s –{" "}
-            {(startSeconds + 5).toFixed(2)}s
-          </Text>
-          <Pressable onPress={() => setStep("crop")}>
-            <Text className="text-blue-600">Back</Text>
-          </Pressable>
-        </View>
+        <DetailsStep
+          isSaving={createClip.isPending}
+          errorMessage={createClip.error?.message ?? null}
+          onBack={() => setStep("crop")}
+          onSubmit={handleSubmit}
+        />
       )}
     </View>
   );
