@@ -12,6 +12,7 @@ import Animated, {
   clamp,
   useAnimatedStyle,
   useSharedValue,
+  withTiming,
 } from "react-native-reanimated";
 import { scheduleOnRN } from "react-native-worklets";
 import type { SourceVideo } from "../types";
@@ -39,6 +40,7 @@ export function CropStep({ source, onBack, onNext }: CropStepProps) {
   const [trackWidth, setTrackWidth] = useState(0);
   const [startSeconds, setStartSeconds] = useState(0);
   const offset = useSharedValue(0);
+  const isActive = useSharedValue(0);
   const endSeconds = startSeconds + CLIP_DURATION_SECONDS;
   const maxStartSeconds = Math.max(
     0,
@@ -74,6 +76,7 @@ export function CropStep({ source, onBack, onNext }: CropStepProps) {
   const pan = Gesture.Pan()
     .minDistance(0)
     .onBegin((event) => {
+      isActive.set(1);
       const next = clamp(event.x - thumbWidth / 2, 0, travel);
       offset.set(next);
       scheduleOnRN(handleScrub, next);
@@ -82,10 +85,18 @@ export function CropStep({ source, onBack, onNext }: CropStepProps) {
       const next = clamp(event.x - thumbWidth / 2, 0, travel);
       offset.set(next);
       scheduleOnRN(handleScrub, next);
+    })
+    .onFinalize(() => {
+      isActive.set(0);
     });
 
   const thumbStyle = useAnimatedStyle(() => ({
-    transform: [{ translateX: offset.get() }],
+    transform: [
+      { translateX: offset.get() },
+      {
+        scaleY: withTiming(isActive.get() === 1 ? 1.15 : 1, { duration: 120 }),
+      },
+    ],
   }));
 
   return (

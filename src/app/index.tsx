@@ -1,10 +1,5 @@
 import { router } from "expo-router";
-import {
-  ActivityIndicator,
-  FlatList,
-  Text,
-  View
-} from "react-native";
+import { ActivityIndicator, FlatList, Text, View } from "react-native";
 
 import { VideoCard } from "@/features/videos/components/video-card";
 import {
@@ -13,6 +8,13 @@ import {
 } from "@/features/videos/video-store";
 
 import { AppButton } from "@/components/app-button";
+
+import Animated, {
+  FadeInDown,
+  LinearTransition,
+} from "react-native-reanimated";
+
+const MAX_STAGGERED_ITEMS = 6;
 
 export default function HomeScreen() {
   const isHydrated = useVideoStoreHydrated();
@@ -31,7 +33,18 @@ export default function HomeScreen() {
       className="flex-1 bg-white dark:bg-black"
       data={videos}
       keyExtractor={(video) => video.id}
-      renderItem={({ item }) => <VideoCard video={item} />}
+      renderItem={({ item, index }) => (
+        <Animated.View
+          entering={
+            index < MAX_STAGGERED_ITEMS
+              ? FadeInDown.delay(index * 60).duration(300)
+              : undefined
+          }
+          layout={LinearTransition}
+        >
+          <VideoCard video={item} />
+        </Animated.View>
+      )}
       contentInsetAdjustmentBehavior="automatic"
       contentContainerClassName="gap-4 p-4"
       ListHeaderComponent={

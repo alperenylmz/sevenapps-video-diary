@@ -1,19 +1,21 @@
 import { useState } from "react";
 import {
-    ActivityIndicator,
-    Pressable,
-    ScrollView,
-    Text,
-    TextInput,
-    View,
+  ActivityIndicator,
+  Pressable,
+  ScrollView,
+  Text,
+  TextInput,
+  View,
 } from "react-native";
 
 import {
-    DESCRIPTION_MAX_LENGTH,
-    NAME_MAX_LENGTH,
-    validateVideoDetails,
-    type VideoDetails,
+  DESCRIPTION_MAX_LENGTH,
+  NAME_MAX_LENGTH,
+  validateVideoDetails,
+  type VideoDetails,
 } from "../video-schema";
+
+import Animated, { FadeIn, FadeOut } from "react-native-reanimated";
 
 type VideoDetailsFormProps = {
   initialValues?: VideoDetails;
@@ -78,9 +80,14 @@ export function VideoDetailsForm({
           className={inputClass(Boolean(errors.name))}
         />
         {errors.name && (
-          <Text className="text-sm text-red-600 dark:text-red-400">
-            {errors.name}
-          </Text>
+          <Animated.View
+            entering={FadeIn.duration(200)}
+            exiting={FadeOut.duration(150)}
+          >
+            <Text className="text-sm text-red-600 dark:text-red-400">
+              {errors.name}
+            </Text>
+          </Animated.View>
         )}
       </View>
 
