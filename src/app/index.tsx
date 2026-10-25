@@ -1,14 +1,18 @@
-import { Link } from "expo-router";
-import { ActivityIndicator, FlatList, StyleSheet } from "react-native";
+import { router } from "expo-router";
+import {
+  ActivityIndicator,
+  FlatList,
+  Text,
+  View
+} from "react-native";
 
-import { ThemedText } from "@/components/themed-text";
-import { ThemedView } from "@/components/themed-view";
-import { Spacing } from "@/constants/theme";
 import { VideoCard } from "@/features/videos/components/video-card";
 import {
   useVideoStore,
   useVideoStoreHydrated,
 } from "@/features/videos/video-store";
+
+import { AppButton } from "@/components/app-button";
 
 export default function HomeScreen() {
   const isHydrated = useVideoStoreHydrated();
@@ -16,40 +20,31 @@ export default function HomeScreen() {
 
   if (!isHydrated) {
     return (
-      <ThemedView style={styles.centered}>
+      <View className="flex-1 items-center justify-center bg-white dark:bg-black">
         <ActivityIndicator />
-      </ThemedView>
+      </View>
     );
   }
 
   return (
-    <ThemedView style={styles.container}>
-      <FlatList
-        data={videos}
-        keyExtractor={(video) => video.id}
-        renderItem={({ item }) => <VideoCard video={item} />}
-        contentInsetAdjustmentBehavior="automatic"
-        contentContainerStyle={styles.list}
-        ListHeaderComponent={
-          <ThemedView style={styles.links}>
-            <Link href="/create">
-              <ThemedText type="link">Create a clip</ThemedText>
-            </Link>
-          </ThemedView>
-        }
-        ListEmptyComponent={
-          <ThemedText themeColor="textSecondary">
-            No videos yet. Tap &quot;Create a Clip&quot; to add one.
-          </ThemedText>
-        }
-      />
-    </ThemedView>
+    <FlatList
+      className="flex-1 bg-white dark:bg-black"
+      data={videos}
+      keyExtractor={(video) => video.id}
+      renderItem={({ item }) => <VideoCard video={item} />}
+      contentInsetAdjustmentBehavior="automatic"
+      contentContainerClassName="gap-4 p-4"
+      ListHeaderComponent={
+        <AppButton
+          label="Create a clip"
+          onPress={() => router.push("/create")}
+        />
+      }
+      ListEmptyComponent={
+        <Text className="py-8 text-center text-neutral-500 dark:text-neutral-400">
+          No videos yet. Tap &quot;Create a clip&quot; to add one.
+        </Text>
+      }
+    />
   );
 }
-
-const styles = StyleSheet.create({
-  container: { flex: 1 },
-  centered: { flex: 1, alignItems: "center", justifyContent: "center" },
-  list: { padding: Spacing.three, gap: Spacing.three },
-  links: { flexDirection: "row", gap: Spacing.three },
-});

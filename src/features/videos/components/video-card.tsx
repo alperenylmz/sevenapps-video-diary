@@ -1,9 +1,5 @@
 import { Link } from "expo-router";
-import { Pressable, StyleSheet, View } from "react-native";
-
-import { ThemedText } from "@/components/themed-text";
-import { ThemedView } from "@/components/themed-view";
-import { Spacing } from "@/constants/theme";
+import { Pressable, StyleSheet, Text, View } from "react-native";
 
 import { Image } from "expo-image";
 
@@ -17,55 +13,35 @@ export function VideoCard({ video }: VideoCardProps) {
   if (error) console.log("[thumbnail]", video.fileName, error.message);
   return (
     <Link href={{ pathname: "/video/[id]", params: { id: video.id } }} asChild>
-      <Pressable style={({ pressed }) => pressed && styles.pressed}>
-        <ThemedView type="backgroundElement" style={styles.card}>
-          <View style={styles.thumbnail}>
-            {thumbnail && (
-              <Image
-                source={thumbnail}
-                style={StyleSheet.absoluteFill}
-                contentFit="cover"
-                transition={150}
-              />
-            )}
-          </View>
-          <View style={styles.texts}>
-            <ThemedText style={styles.name} numberOfLines={1}>
-              {video.name}
-            </ThemedText>
-            <ThemedText
-              type="small"
-              themeColor="textSecondary"
-              numberOfLines={2}
-            >
-              {video.description}
-            </ThemedText>
-            <ThemedText type="small" themeColor="textSecondary">
-              {new Date(video.createdAt).toLocaleDateString()}
-            </ThemedText>
-          </View>
-        </ThemedView>
+      <Pressable className="flex-row items-center gap-4 rounded-2xl bg-neutral-100 p-4 active:opacity-70 dark:bg-neutral-900">
+        <View className="aspect-video w-28 overflow-hidden rounded-lg bg-neutral-300 dark:bg-neutral-800">
+          {thumbnail && (
+            <Image
+              source={thumbnail}
+              style={StyleSheet.absoluteFill}
+              contentFit="cover"
+              transition={150}
+            />
+          )}
+        </View>
+        <View className="flex-1 gap-1">
+          <Text
+            numberOfLines={1}
+            className="font-bold text-black dark:text-white"
+          >
+            {video.name}
+          </Text>
+          <Text
+            numberOfLines={2}
+            className="text-sm text-neutral-500 dark:text-neutral-400"
+          >
+            {video.description}
+          </Text>
+          <Text className="text-sm text-neutral-500 dark:text-neutral-400">
+            {new Date(video.createdAt).toLocaleDateString()}
+          </Text>
+        </View>
       </Pressable>
     </Link>
   );
 }
-
-const styles = StyleSheet.create({
-  card: {
-    flexDirection: "row",
-    alignItems: "center",
-    padding: Spacing.three,
-    borderRadius: Spacing.three,
-    gap: Spacing.three,
-  },
-  thumbnail: {
-    width: 112,
-    aspectRatio: 16 / 9,
-    borderRadius: Spacing.two,
-    overflow: "hidden",
-    backgroundColor: "rgba(128, 128, 128, 0.25)",
-  },
-  texts: { flex: 1, gap: Spacing.one },
-  name: { fontWeight: "700" },
-  pressed: { opacity: 0.7 },
-});

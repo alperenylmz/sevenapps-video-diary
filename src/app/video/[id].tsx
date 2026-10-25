@@ -3,13 +3,13 @@ import { useState } from "react";
 import {
   ActivityIndicator,
   Alert,
-  Button,
   ScrollView,
   StyleSheet,
+  Text,
+  View
 } from "react-native";
 
-import { ThemedText } from "@/components/themed-text";
-import { ThemedView } from "@/components/themed-view";
+import { AppButton } from "@/components/app-button";
 import { VideoPlayer } from "@/components/video-player";
 import { Spacing } from "@/constants/theme";
 import {
@@ -33,19 +33,19 @@ export default function VideoDetailsScreen() {
 
   if (!isHydrated) {
     return (
-      <ThemedView style={styles.centered}>
+      <View className="flex-1 items-center justify-center bg-white dark:bg-black">
         <ActivityIndicator />
-      </ThemedView>
+      </View>
     );
   }
 
   if (!video) {
     return isDeleting ? (
-      <ThemedView style={styles.fill} />
+      <View className="flex-1 bg-white dark:bg-black" />
     ) : (
-      <ThemedView style={styles.centered}>
-        <ThemedText>Video not found.</ThemedText>
-      </ThemedView>
+      <View className="flex-1 items-center justify-center bg-white dark:bg-black">
+        <Text className="text-black dark:text-white">Video not found.</Text>
+      </View>
     );
   }
 
@@ -69,36 +69,49 @@ export default function VideoDetailsScreen() {
 
   return (
     <ScrollView
+      className="flex-1 bg-white dark:bg-black"
       contentInsetAdjustmentBehavior="automatic"
-      contentContainerStyle={styles.content}
+      contentContainerClassName="gap-4 p-4"
     >
       <Stack.Screen options={{ title: video.name }} />
 
       {fileExists ? (
         <VideoPlayer uri={getVideoUri(video.fileName)} autoPlay loop />
       ) : (
-        <ThemedView type="backgroundElement" style={styles.missing}>
-          <ThemedText themeColor="textSecondary">
+        <View className="aspect-video items-center justify-center rounded-2xl bg-neutral-100 dark:bg-neutral-900">
+          <Text className="text-neutral-500 dark:text-neutral-400">
             The video file is missing from this device.
-          </ThemedText>
-        </ThemedView>
+          </Text>
+        </View>
       )}
 
-      <ThemedText style={styles.name}>{video.name}</ThemedText>
-      <ThemedText themeColor="textSecondary">{video.description}</ThemedText>
-      <ThemedText type="small" themeColor="textSecondary">
+      <Text className="text-[22px] font-bold text-black dark:text-white">
+        {video.name}
+      </Text>
+      {video.description ? (
+        <Text className="text-neutral-500 dark:text-neutral-400">
+          {video.description}
+        </Text>
+      ) : null}
+      <Text className="text-sm text-neutral-500 dark:text-neutral-400">
         {new Date(video.createdAt).toLocaleDateString()} ·{" "}
         {video.durationSeconds}s
-      </ThemedText>
+      </Text>
 
-      <Button
-        title="Edit details"
-        onPress={() =>
-          router.push({ pathname: "/edit-video", params: { id: video.id } })
-        }
-      />
-
-      <Button title="Delete video" color="#d93025" onPress={handleDelete} />
+      <View className="gap-3 pt-2">
+        <AppButton
+          label="Edit details"
+          variant="secondary"
+          onPress={() =>
+            router.push({ pathname: "/edit-video", params: { id: video.id } })
+          }
+        />
+        <AppButton
+          label="Delete video"
+          variant="destructive"
+          onPress={handleDelete}
+        />
+      </View>
     </ScrollView>
   );
 }
