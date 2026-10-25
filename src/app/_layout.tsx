@@ -24,6 +24,10 @@ export default function RootLayout() {
             name="create"
             options={{ title: "New Clip", presentation: "modal" }}
           />
+          <Stack.Screen
+            name="edit-video"
+            options={{ title: "Edit Details", presentation: "modal" }}
+          />
         </Stack>
       </ThemeProvider>
     </QueryClientProvider>

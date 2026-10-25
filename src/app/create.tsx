@@ -1,11 +1,9 @@
 import { CropStep } from "@/features/create-video/components/crop-step";
-import {
-  DetailsStep,
-  type ClipDetails,
-} from "@/features/create-video/components/details-step";
 import { SelectVideoStep } from "@/features/create-video/components/select-video-step";
 import type { CreateStep, SourceVideo } from "@/features/create-video/types";
 import { useCreateClipMutation } from "@/features/create-video/use-create-clip-mutation";
+import { VideoDetailsForm } from "@/features/videos/components/video-details-form";
+import type { VideoDetails } from "@/features/videos/video-schema";
 import { router, Stack } from "expo-router";
 import { useState } from "react";
 import { Text, View } from "react-native";
@@ -33,7 +31,7 @@ export default function CreateVideoScreen() {
     setStep("details");
   }
 
-  function handleSubmit(details: ClipDetails) {
+  function handleSubmit(details: VideoDetails) {
     if (!source) return;
     createClip.mutate(
       { sourceUri: source.uri, startSeconds, ...details },
@@ -57,10 +55,12 @@ export default function CreateVideoScreen() {
         />
       )}
       {step === "details" && (
-        <DetailsStep
-          isSaving={createClip.isPending}
+        <VideoDetailsForm
+          submitLabel="Save clip"
+          cancelLabel="Back"
+          isSubmitting={createClip.isPending}
           errorMessage={createClip.error?.message ?? null}
-          onBack={() => setStep("crop")}
+          onCancel={() => setStep("crop")}
           onSubmit={handleSubmit}
         />
       )}

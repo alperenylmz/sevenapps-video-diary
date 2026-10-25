@@ -4,11 +4,13 @@ import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
 
 import type { VideoEntry } from "./types";
+import type { VideoDetails } from "./video-schema";
 
 type VideoState = {
   videos: VideoEntry[];
   addVideo: (video: VideoEntry) => void;
   removeVideo: (id: string) => void;
+  updateVideo: (id: string, changes: VideoDetails) => void;
 };
 
 export const useVideoStore = create<VideoState>()(
@@ -21,6 +23,10 @@ export const useVideoStore = create<VideoState>()(
         set((state) => ({
           videos: state.videos.filter((video) => video.id !== id),
         })),
+      updateVideo: (id, changes)=>
+        set((state)=>({
+          videos: state.videos.map((video)=> video.id === id ? {...video, ...changes} : video),
+        }))
     }),
     {
       name: "video-diary/videos",

@@ -1,11 +1,11 @@
 import { router, Stack, useLocalSearchParams } from "expo-router";
 import { useState } from "react";
 import {
-    ActivityIndicator,
-    Alert,
-    Button,
-    ScrollView,
-    StyleSheet,
+  ActivityIndicator,
+  Alert,
+  Button,
+  ScrollView,
+  StyleSheet,
 } from "react-native";
 
 import { ThemedText } from "@/components/themed-text";
@@ -13,13 +13,13 @@ import { ThemedView } from "@/components/themed-view";
 import { VideoPlayer } from "@/components/video-player";
 import { Spacing } from "@/constants/theme";
 import {
-    deleteVideoFile,
-    getVideoUri,
-    videoFileExists,
+  deleteVideoFile,
+  getVideoUri,
+  videoFileExists,
 } from "@/features/videos/video-storage";
 import {
-    useVideoStore,
-    useVideoStoreHydrated,
+  useVideoStore,
+  useVideoStoreHydrated,
 } from "@/features/videos/video-store";
 
 export default function VideoDetailsScreen() {
@@ -90,6 +90,13 @@ export default function VideoDetailsScreen() {
         {new Date(video.createdAt).toLocaleDateString()} ·{" "}
         {video.durationSeconds}s
       </ThemedText>
+
+      <Button
+        title="Edit details"
+        onPress={() =>
+          router.push({ pathname: "/edit-video", params: { id: video.id } })
+        }
+      />
 
       <Button title="Delete video" color="#d93025" onPress={handleDelete} />
     </ScrollView>
