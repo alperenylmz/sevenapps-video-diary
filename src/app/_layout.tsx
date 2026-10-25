@@ -1,8 +1,14 @@
 import "@/global.css";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { DarkTheme, DefaultTheme, Stack, ThemeProvider } from "expo-router";
+import {
+  DarkTheme,
+  DefaultTheme,
+  router,
+  Stack,
+  ThemeProvider,
+} from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
-import { useColorScheme } from "react-native";
+import { Pressable, Text, useColorScheme } from "react-native";
 
 import { AnimatedSplashOverlay } from "@/components/animated-icon";
 
@@ -18,7 +24,25 @@ export default function RootLayout() {
       <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
         <AnimatedSplashOverlay />
         <Stack>
-          <Stack.Screen name="index" options={{ title: "Video Diary" }} />
+          <Stack.Screen
+            name="index"
+            options={{
+              title: "Video Diary",
+              headerRight: () => (
+                <Pressable
+                  onPress={() => router.push("/create")}
+                  accessibilityRole="button"
+                  accessibilityLabel="Create a clip"
+                  hitSlop={8}
+                  className="size-[36px] items-center justify-center rounded-full bg-blue-600 active:opacity-70"
+                >
+                  <Text className="text-[30px] font-medium leading-[32px] text-white">
+                    +
+                  </Text>
+                </Pressable>
+              ),
+            }}
+          />
           <Stack.Screen name="video/[id]" options={{ title: "Video" }} />
           <Stack.Screen
             name="create"

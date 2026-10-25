@@ -16,7 +16,10 @@ export async function pickSourceVideo(): Promise<PickSourceVideoResult> {
     };
 
     const asset = result.assets?.[0];
-    const durationSeconds= (asset.duration ?? 0) / 1000;
+    if (!asset?.duration) {
+        throw new Error("Picked video or its duration is unavailable");
+    }
+    const durationSeconds = asset.duration / 1000;
 
     if(durationSeconds < CLIP_DURATION_SECONDS){
         return {status: "too-short", durationSeconds};

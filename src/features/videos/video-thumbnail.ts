@@ -6,6 +6,10 @@ import { getVideoUri, videoFileExists } from "./video-storage";
 const THUMBNAIL_TIME_SECONDS = 1;
 const THUMBNAIL_MAX_WIDTH = 640;
 const READY_TIMEOUT_MS=10_000;
+const THUMBNAIL_GC_TIME_MS = 10 * 60 * 1000;
+
+export const videoThumbnailQueryKey = (fileName: string) =>
+  ["video-thumbnail", fileName] as const;
 
 function waitUntilReady(player: VideoPlayer): Promise<void> {
   return new Promise((resolve, reject) => {
@@ -51,13 +55,13 @@ async function generateVideoThumbnail(uri: string) {
 
 export function useVideoThumbnail(fileName: string) {
   return useQuery({
-    queryKey: ["video-thumbnail", fileName],
+    queryKey: videoThumbnailQueryKey(fileName),
     queryFn: () => {
       if (!videoFileExists(fileName)) throw new Error("Video file is missing");
       return generateVideoThumbnail(getVideoUri(fileName))
     },
     staleTime: Infinity,
-    gcTime: Infinity,
+    gcTime: THUMBNAIL_GC_TIME_MS,
     retry: false,
     structuralSharing: false,
   });

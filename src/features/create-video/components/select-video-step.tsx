@@ -49,7 +49,9 @@ export function SelectVideoStep({ onSelected }: SelectVideoStepProps) {
       />
 
       {error && (
-        <Text className="text-center text-sm text-red-600">{error}</Text>
+        <Text className="text-center text-sm text-red-600 dark:text-red-400">
+          {error}
+        </Text>
       )}
     </View>
   );

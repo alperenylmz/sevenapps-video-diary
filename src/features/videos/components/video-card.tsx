@@ -2,6 +2,7 @@ import { Link } from "expo-router";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 
 import { Image } from "expo-image";
+import { SymbolView } from "expo-symbols";
 
 import type { VideoEntry } from "../types";
 import { useVideoThumbnail } from "../video-thumbnail";
@@ -40,6 +41,11 @@ export function VideoCard({ video }: VideoCardProps) {
             {new Date(video.createdAt).toLocaleDateString()}
           </Text>
         </View>
+        <SymbolView
+          name={{ ios: "chevron.right", android: "chevron_right" }}
+          size={16}
+          tintColor="#a1a1a1"
+        />
       </Pressable>
     </Link>
   );

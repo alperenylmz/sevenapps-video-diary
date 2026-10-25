@@ -1,4 +1,3 @@
-import { router } from "expo-router";
 import { ActivityIndicator, FlatList, Text, View } from "react-native";
 
 import { VideoCard } from "@/features/videos/components/video-card";
@@ -68,16 +67,15 @@ export default function HomeScreen() {
       contentContainerClassName="gap-4 p-4"
       onEndReached={() => void loadMore()}
       onEndReachedThreshold={0.5}
-      ListHeaderComponent={
-        <AppButton
-          label="Create a clip"
-          onPress={() => router.push("/create")}
-        />
-      }
       ListEmptyComponent={
-        <Text className="py-8 text-center text-neutral-500 dark:text-neutral-400">
-          No videos yet. Tap &quot;Create a clip&quot; to add one.
-        </Text>
+        <View className="items-center gap-2 px-6 py-16">
+          <Text className="text-lg font-semibold text-black dark:text-white">
+            No clips yet
+          </Text>
+          <Text className="text-center text-neutral-500 dark:text-neutral-400">
+            Tap + to create your first 5-second clip.
+          </Text>
+        </View>
       }
       ListFooterComponent={
         isLoadingMore ? <ActivityIndicator className="py-4" /> : null

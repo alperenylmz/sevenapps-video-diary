@@ -9,8 +9,11 @@
     "userInterfaceStyle": "automatic",
     "platforms": ["ios", "android"],
     "ios": {
-      "icon": "./assets/expo.icon",
-      "bundleIdentifier": "com.alperenylmaz.sevenapps-video-diary"
+      "icon": "./assets/images/icon.png",
+      "bundleIdentifier": "com.alperenylmaz.sevenapps-video-diary",
+      "infoPlist": {
+        "CFBundleDisplayName": "Video Diary"
+      }
     },
     "android": {
       "adaptiveIcon": {
@@ -30,9 +33,9 @@
       [
         "expo-splash-screen",
         {
-          "backgroundColor": "#208AEF",
+          "backgroundColor": "#EF4C47",
           "image": "./assets/images/splash-icon.png",
-          "imageWidth": 76
+          "imageWidth": 200
         }
       ],
       "expo-video",

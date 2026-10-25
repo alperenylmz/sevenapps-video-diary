@@ -149,7 +149,7 @@ const styles = StyleSheet.create({
   video: {
     width: "100%",
     aspectRatio: 16 / 9,
-    borderRadius: 12,
+    borderRadius: 16,
     backgroundColor: "#000",
   },
   thumb: {

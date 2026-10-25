@@ -1,3 +1,4 @@
+import { useQueryClient } from "@tanstack/react-query";
 import { router, Stack, useLocalSearchParams } from "expo-router";
 import { useState } from "react";
 import {
@@ -11,6 +12,7 @@ import {
 import { AppButton } from "@/components/app-button";
 import { VideoPlayer } from "@/components/video-player";
 import { useVideo } from "@/features/videos/use-video";
+import { videoThumbnailQueryKey } from "@/features/videos/video-thumbnail";
 import {
   deleteVideoFile,
   getVideoUri,
@@ -22,6 +24,7 @@ export default function VideoDetailsScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const { video, isLoading } = useVideo(id);
   const removeVideo = useVideoStore((state) => state.removeVideo);
+  const queryClient = useQueryClient();
   const [isDeleting, setIsDeleting] = useState(false);
 
   if (isDeleting) {
@@ -67,6 +70,9 @@ export default function VideoDetailsScreen() {
           } catch (error) {
             console.warn("Orphaned video file could not be deleted", error);
           }
+          queryClient.removeQueries({
+            queryKey: videoThumbnailQueryKey(video.fileName),
+          });
         },
       },
     ]);
@@ -80,28 +86,32 @@ export default function VideoDetailsScreen() {
     >
       <Stack.Screen options={{ title: video.name }} />
 
-      {fileExists ? (
-        <VideoPlayer uri={getVideoUri(video.fileName)} autoPlay loop />
-      ) : (
-        <View className="aspect-video items-center justify-center rounded-2xl bg-neutral-100 dark:bg-neutral-900">
-          <Text className="text-neutral-500 dark:text-neutral-400">
-            The video file is missing from this device.
-          </Text>
-        </View>
-      )}
+      <View className="overflow-hidden rounded-2xl border border-neutral-200 dark:border-neutral-800">
+        {fileExists ? (
+          <VideoPlayer uri={getVideoUri(video.fileName)} autoPlay loop />
+        ) : (
+          <View className="aspect-video items-center justify-center bg-neutral-100 dark:bg-neutral-900">
+            <Text className="text-neutral-500 dark:text-neutral-400">
+              The video file is missing from this device.
+            </Text>
+          </View>
+        )}
+      </View>
 
-      <Text className="text-[22px] font-bold text-black dark:text-white">
-        {video.name}
-      </Text>
-      {video.description ? (
-        <Text className="text-neutral-500 dark:text-neutral-400">
-          {video.description}
+      <View className="gap-2">
+        <Text className="text-[22px] font-bold text-black dark:text-white">
+          {video.name}
         </Text>
-      ) : null}
-      <Text className="text-sm text-neutral-500 dark:text-neutral-400">
-        {new Date(video.createdAt).toLocaleDateString()} ·{" "}
-        {video.durationSeconds}s
-      </Text>
+        {video.description ? (
+          <Text className="text-base text-neutral-600 dark:text-neutral-300">
+            {video.description}
+          </Text>
+        ) : null}
+        <Text className="text-sm text-neutral-500 dark:text-neutral-400">
+          {new Date(video.createdAt).toLocaleDateString()} ·{" "}
+          {video.durationSeconds}s
+        </Text>
+      </View>
 
       <View className="gap-3 pt-2">
         <AppButton
