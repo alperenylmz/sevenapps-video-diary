@@ -8,6 +8,7 @@ type AppButtonProps = {
   variant?: Variant;
   disabled?: boolean;
   loading?: boolean;
+  className?: string;
 };
 
 const VARIANT_CLASSES: Record<Variant, { container: string; label: string }> = {
@@ -28,6 +29,7 @@ export function AppButton({
   variant = "primary",
   disabled = false,
   loading = false,
+  className = "",
 }: AppButtonProps) {
   const isInactive = disabled || loading;
   const classes = VARIANT_CLASSES[variant];
@@ -36,7 +38,7 @@ export function AppButton({
     <Pressable
       onPress={onPress}
       disabled={isInactive}
-      className={`items-center rounded-2xl py-4 active:opacity-70 ${classes.container} ${isInactive ? "opacity-50" : ""}`}
+      className={`items-center rounded-2xl py-4 active:opacity-70 ${classes.container} ${isInactive ? "opacity-50" : ""} ${className}`}
     >
       {loading ? (
         <ActivityIndicator

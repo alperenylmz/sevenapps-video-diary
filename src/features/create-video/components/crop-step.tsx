@@ -1,8 +1,9 @@
+import { AppButton } from "@/components/app-button";
 import { CLIP_DURATION_SECONDS } from "@/features/video-trim/trim-clip";
 import { useEventListener } from "expo";
 import { useVideoPlayer, VideoView, type VideoPlayer } from "expo-video";
 import { useState } from "react";
-import { Pressable, StyleSheet, Text, View } from "react-native";
+import { StyleSheet, Text, View } from "react-native";
 import {
   Gesture,
   GestureDetector,
@@ -131,20 +132,12 @@ export function CropStep({ source, onBack, onNext }: CropStepProps) {
           </View>
         </GestureDetector>
         <View className="mt-auto gap-3">
-          <Pressable
-            onPress={() => onNext(startSeconds)}
-            className="items-center rounded-2xl bg-blue-600 py-4 active:opacity-70"
-          >
-            <Text className="font-semibold text-white">Next</Text>
-          </Pressable>
-          <Pressable
+          <AppButton label="Next" onPress={() => onNext(startSeconds)} />
+          <AppButton
+            label="Choose another video"
+            variant="secondary"
             onPress={onBack}
-            className="items-center rounded-2xl bg-neutral-100 py-4 active:opacity-70 dark:bg-neutral-800"
-          >
-            <Text className="font-semibold text-black dark:text-white">
-              Choose another video
-            </Text>
-          </Pressable>
+          />
         </View>
       </View>
     </GestureHandlerRootView>

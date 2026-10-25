@@ -1,6 +1,7 @@
+import { AppButton } from "@/components/app-button";
 import { CLIP_DURATION_SECONDS } from "@/features/video-trim/trim-clip";
 import { useState } from "react";
-import { ActivityIndicator, Pressable, Text, View } from "react-native";
+import { Text, View } from "react-native";
 import { pickSourceVideo } from "../pick-source-video";
 import type { SourceVideo } from "../types";
 
@@ -40,21 +41,12 @@ export function SelectVideoStep({ onSelected }: SelectVideoStepProps) {
         {CLIP_DURATION_SECONDS}-second moment from it.
       </Text>
 
-      <Pressable
+      <AppButton
+        label="Select a Video"
         onPress={handlePick}
-        disabled={isPicking}
-        className={`mt-2 min-w-48 items-center rounded-2xl bg-blue-500 px-6 py-4 active:opacity-70 ${
-          isPicking ? "opacity-50" : ""
-        }`}
-      >
-        {isPicking ? (
-          <ActivityIndicator color="white" />
-        ) : (
-          <Text className="text-base font-semibold text-white">
-            Select a Video
-          </Text>
-        )}
-      </Pressable>
+        loading={isPicking}
+        className="mt-2 min-w-48 px-6"
+      />
 
       {error && (
         <Text className="text-center text-sm text-red-600">{error}</Text>

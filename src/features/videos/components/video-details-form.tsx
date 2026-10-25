@@ -1,12 +1,5 @@
 import { useState } from "react";
-import {
-  ActivityIndicator,
-  Pressable,
-  ScrollView,
-  Text,
-  TextInput,
-  View,
-} from "react-native";
+import { ScrollView, Text, TextInput, View } from "react-native";
 
 import {
   DESCRIPTION_MAX_LENGTH,
@@ -16,6 +9,8 @@ import {
 } from "../video-schema";
 
 import Animated, { FadeIn, FadeOut } from "react-native-reanimated";
+
+import { AppButton } from "@/components/app-button";
 
 type VideoDetailsFormProps = {
   initialValues?: VideoDetails;
@@ -122,27 +117,18 @@ export function VideoDetailsForm({
         </Text>
       )}
 
-      <Pressable
+      <AppButton
+        label={submitLabel}
         onPress={handleSubmit}
-        disabled={isSubmitting}
-        className={`items-center rounded-2xl bg-blue-600 py-4 active:opacity-70 ${isSubmitting ? "opacity-50" : ""}`}
-      >
-        {isSubmitting ? (
-          <ActivityIndicator color="white" />
-        ) : (
-          <Text className="font-semibold text-white">{submitLabel}</Text>
-        )}
-      </Pressable>
+        loading={isSubmitting}
+      />
 
-      <Pressable
+      <AppButton
+        label={cancelLabel}
+        variant="secondary"
         onPress={onCancel}
         disabled={isSubmitting}
-        className={`items-center rounded-2xl bg-neutral-100 py-4 active:opacity-70 dark:bg-neutral-800 ${isSubmitting ? "opacity-50" : ""}`}
-      >
-        <Text className="font-semibold text-black dark:text-white">
-          {cancelLabel}
-        </Text>
-      </Pressable>
+      />
     </ScrollView>
   );
 }
