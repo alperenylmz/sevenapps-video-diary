@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { createVideoPlayer, type VideoPlayer } from "expo-video";
 
-import { getVideoUri } from "./video-storage";
+import { getVideoUri, videoFileExists } from "./video-storage";
 
 const THUMBNAIL_TIME_SECONDS = 1;
 const THUMBNAIL_MAX_WIDTH = 640;
@@ -52,7 +52,10 @@ async function generateVideoThumbnail(uri: string) {
 export function useVideoThumbnail(fileName: string) {
   return useQuery({
     queryKey: ["video-thumbnail", fileName],
-    queryFn: () => generateVideoThumbnail(getVideoUri(fileName)),
+    queryFn: () => {
+      if (!videoFileExists(fileName)) throw new Error("Video file is missing");
+      return generateVideoThumbnail(getVideoUri(fileName))
+    },
     staleTime: Infinity,
     gcTime: Infinity,
     retry: false,

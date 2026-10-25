@@ -2,13 +2,11 @@ import { router } from "expo-router";
 import { ActivityIndicator, FlatList, Text, View } from "react-native";
 
 import { VideoCard } from "@/features/videos/components/video-card";
-import {
-  useVideoStore,
-  useVideoStoreHydrated,
-} from "@/features/videos/video-store";
+import { useVideoStore } from "@/features/videos/video-store";
 
 import { AppButton } from "@/components/app-button";
 
+import { useEffect } from "react";
 import Animated, {
   FadeInDown,
   LinearTransition,
@@ -17,13 +15,34 @@ import Animated, {
 const MAX_STAGGERED_ITEMS = 6;
 
 export default function HomeScreen() {
-  const isHydrated = useVideoStoreHydrated();
   const videos = useVideoStore((state) => state.videos);
+  const isLoading = useVideoStore((state) => state.isLoading);
+  const isLoadingMore = useVideoStore((state) => state.isLoadingMore);
+  const error = useVideoStore((state) => state.error);
+  const loadInitial = useVideoStore((state) => state.loadInitial);
+  const loadMore = useVideoStore((state) => state.loadMore);
 
-  if (!isHydrated) {
+  useEffect(() => {
+    void loadInitial();
+  }, [loadInitial]);
+
+  if (isLoading) {
     return (
       <View className="flex-1 items-center justify-center bg-white dark:bg-black">
         <ActivityIndicator />
+      </View>
+    );
+  }
+
+  if (error && videos.length === 0) {
+    return (
+      <View className="flex-1 items-center justify-center gap-4 bg-white p-6 dark:bg-black">
+        <Text className="text-center text-neutral-500 dark:text-neutral-400">
+          {error}
+        </Text>
+        <View className="w-full">
+          <AppButton label="Try again" onPress={() => void loadInitial()} />
+        </View>
       </View>
     );
   }
@@ -47,6 +66,8 @@ export default function HomeScreen() {
       )}
       contentInsetAdjustmentBehavior="automatic"
       contentContainerClassName="gap-4 p-4"
+      onEndReached={() => void loadMore()}
+      onEndReachedThreshold={0.5}
       ListHeaderComponent={
         <AppButton
           label="Create a clip"
@@ -57,6 +78,9 @@ export default function HomeScreen() {
         <Text className="py-8 text-center text-neutral-500 dark:text-neutral-400">
           No videos yet. Tap &quot;Create a clip&quot; to add one.
         </Text>
+      }
+      ListFooterComponent={
+        isLoadingMore ? <ActivityIndicator className="py-4" /> : null
       }
     />
   );

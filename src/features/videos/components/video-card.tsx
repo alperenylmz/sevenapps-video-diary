@@ -9,8 +9,7 @@ import { useVideoThumbnail } from "../video-thumbnail";
 type VideoCardProps = { video: VideoEntry };
 
 export function VideoCard({ video }: VideoCardProps) {
-  const { data: thumbnail, error } = useVideoThumbnail(video.fileName);
-  if (error) console.log("[thumbnail]", video.fileName, error.message);
+  const { data: thumbnail } = useVideoThumbnail(video.fileName);
   return (
     <Link href={{ pathname: "/video/[id]", params: { id: video.id } }} asChild>
       <Pressable className="flex-row items-center gap-4 rounded-2xl bg-neutral-100 p-4 active:opacity-70 dark:bg-neutral-900">

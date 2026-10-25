@@ -4,34 +4,31 @@ import {
   ActivityIndicator,
   Alert,
   ScrollView,
-  StyleSheet,
   Text,
   View
 } from "react-native";
 
 import { AppButton } from "@/components/app-button";
 import { VideoPlayer } from "@/components/video-player";
-import { Spacing } from "@/constants/theme";
+import { useVideo } from "@/features/videos/use-video";
 import {
   deleteVideoFile,
   getVideoUri,
   videoFileExists,
 } from "@/features/videos/video-storage";
-import {
-  useVideoStore,
-  useVideoStoreHydrated,
-} from "@/features/videos/video-store";
+import { useVideoStore } from "@/features/videos/video-store";
 
 export default function VideoDetailsScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
-  const isHydrated = useVideoStoreHydrated();
-  const video = useVideoStore((state) =>
-    state.videos.find((item) => item.id === id),
-  );
+  const { video, isLoading } = useVideo(id);
   const removeVideo = useVideoStore((state) => state.removeVideo);
   const [isDeleting, setIsDeleting] = useState(false);
 
-  if (!isHydrated) {
+  if (isDeleting) {
+    return <View className="flex-1 bg-white dark:bg-black" />;
+  }
+
+  if (isLoading) {
     return (
       <View className="flex-1 items-center justify-center bg-white dark:bg-black">
         <ActivityIndicator />
@@ -40,9 +37,7 @@ export default function VideoDetailsScreen() {
   }
 
   if (!video) {
-    return isDeleting ? (
-      <View className="flex-1 bg-white dark:bg-black" />
-    ) : (
+    return (
       <View className="flex-1 items-center justify-center bg-white dark:bg-black">
         <Text className="text-black dark:text-white">Video not found.</Text>
       </View>
@@ -57,11 +52,21 @@ export default function VideoDetailsScreen() {
       {
         text: "Delete",
         style: "destructive",
-        onPress: () => {
+        onPress: async () => {
           setIsDeleting(true);
+          try {
+            await removeVideo(video.id);
+          } catch {
+            setIsDeleting(false);
+            Alert.alert("Could not delete the video", "Please try again");
+            return;
+          }
           router.back();
-          removeVideo(video.id);
-          deleteVideoFile(video.fileName);
+          try {
+            deleteVideoFile(video.fileName);
+          } catch (error) {
+            console.warn("Orphaned video file could not be deleted", error);
+          }
         },
       },
     ]);
@@ -115,16 +120,3 @@ export default function VideoDetailsScreen() {
     </ScrollView>
   );
 }
-
-const styles = StyleSheet.create({
-  fill: { flex: 1 },
-  centered: { flex: 1, alignItems: "center", justifyContent: "center" },
-  content: { padding: Spacing.three, gap: Spacing.three },
-  missing: {
-    aspectRatio: 16 / 9,
-    alignItems: "center",
-    justifyContent: "center",
-    borderRadius: Spacing.three,
-  },
-  name: { fontSize: 22, fontWeight: "700" },
-});

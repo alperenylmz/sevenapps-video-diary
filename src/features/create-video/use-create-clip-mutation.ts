@@ -1,6 +1,6 @@
 import { CLIP_DURATION_SECONDS, trimClip } from "@/features/video-trim/trim-clip";
 import type { VideoEntry } from "@/features/videos/types";
-import { deleteFileAtUri, saveTrimmedVideo } from "@/features/videos/video-storage";
+import { deleteFileAtUri, deleteVideoFile, saveTrimmedVideo } from "@/features/videos/video-storage";
 import { useVideoStore } from "@/features/videos/video-store";
 import { useMutation } from "@tanstack/react-query";
 
@@ -20,17 +20,27 @@ export function useCreateClipMutation(){
             sourceUri, startSeconds, name, description,
         }: CreateClipVariables): Promise<VideoEntry> => {
             const trimmed=await trimClip({sourceUri, startSeconds});
-
+            let saved:{id: string,fileName:string} | null = null;
             try {
-                const {id, fileName}=saveTrimmedVideo(trimmed.uri);
-                return{id, name, description, fileName, durationSeconds:CLIP_DURATION_SECONDS, createdAt: Date.now()};
+                saved = saveTrimmedVideo(trimmed.uri);
+                const entry: VideoEntry = {
+                    id: saved.id,
+                    name,
+                    description,
+                    fileName: saved.fileName,
+                    durationSeconds: CLIP_DURATION_SECONDS,
+                    createdAt: Date.now(),
+                };
+                await addVideo(entry);
+                return entry;
             } catch (error) {
-                deleteFileAtUri(trimmed.uri);
+                try {
+                    if (saved) deleteVideoFile(saved.fileName);
+                    else deleteFileAtUri(trimmed.uri);
+                } catch{
+                }
                 throw error;
             }
         },
-        onSuccess: (video)=> {
-            addVideo(video);
-        }
-    })
+    });
 }
